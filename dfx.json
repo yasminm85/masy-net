@@ -1,0 +1,17 @@
+{
+  "canisters": {
+    "salary_net_backend": {
+      "candid": "src/salary_net_backend/salary_net_backend.did",
+      "package": "salary_net_backend",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
