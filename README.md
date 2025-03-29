@@ -1,61 +1,141 @@
-# `salary_net`
+# Masy-net
 
-Welcome to your new `salary_net` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+[Masy-net](https://wiocp-dyaaa-aaaad-qg7rq-cai.icp0.io/) is a decentralized data storage application built on the Internet Computer Protocol (ICP) that also provides real-time currency conversion information. Users can securely log in using Internet Identity (II), a passwordless authentication system, to access its features.
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+**✨ Key Features**:
+- 🔐 Passwordless Login via Internet Identity (II)
+- 🚀 On-chain Data Storage on the ICP
+- 📊 Currency Conversion with exchange rates using HTTPS outcalls
 
-To learn more before you start working with `salary_net`, see the following documentation available online:
+## 🛠️ How It Works
+### 1. Internet Identity Authentication
+- User can login with Internet Identity (II)
+### 2. Data Storage on ICP
+- User can add new employee data and stored in canister's memory
+### 3. Currency Conversion via HTTPS Outcalls
+- The canister sends an authenticated request to [ExchangeRate-API](https://www.exchangerate-api.com/)
+ 
+## 👾 Code Snippets
+### Internet Identity Login
+AuthContext.jsx
+const login = async (onSuccessRedirect = "/management") => {
+    try {
+      if (!authClient) {
+        console.error("Auth client not initialized");
+        return false;
+      }
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
-- [Rust Canister Development Guide](https://internetcomputer.org/docs/current/developer-docs/backend/rust/)
-- [ic-cdk](https://docs.rs/ic-cdk)
-- [ic-cdk-macros](https://docs.rs/ic-cdk-macros)
-- [Candid Introduction](https://internetcomputer.org/docs/current/developer-docs/backend/candid/)
+      const identityProvider = import.meta.env.VITE_DFX_NETWORK === "ic"
+        ? "https://identity.ic0.app"
+        : `http://${import.meta.env.VITE_CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`;
 
-If you want to start working on your project right away, you might want to try the following commands:
+      return new Promise((resolve) => {
+        authClient.login({
+          identityProvider,
+          onSuccess: () => {
+            setIsAuthenticated(true);
+            const identity = authClient.getIdentity();
+            setPrincipal(identity.getPrincipal());
+            resolve(true);
+            
+            // redirect dulu
+            window.location.href = onSuccessRedirect;
+          },
+          onError: (error) => {
+            console.error("Login failed:", error);
+            resolve(false);
+          },
+          maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000)
+        });
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
+    }
+  };
+### 💱 Currency Conversion (HTTPS Outcall)
+lib.rs
+#[update]
+async fn fetch_exchange_rates() -> ApiResult {
+    let url = "https://api.exchangerate-api.com/v4/latest/USD";
+    
+    let request = CanisterHttpRequestArgument {
+        url: url.to_string(),
+        method: HttpMethod::GET,
+        headers: vec![HttpHeader {
+            name: "Content-Type".to_string(),
+            value: "application/json".to_string(),
+        }],
+        body: None,
+        max_response_bytes: Some(2_000_000),
+        transform: None,
+    };
+
+    let result = match http_request(request, 2_000_000_000).await {
+        Ok((response,)) => {
+            process_exchange_rate_response(response)
+        }
+        Err((code, msg)) => Err(format!("HTTP error: {:?}, message: {}", code, msg)),
+    };
+    
+    result.into()
+}
+### 💾 Data Storage in Canister
+lib.rs
+#[update]
+fn add_employee(
+    nik: String,
+    name: String,
+    email: String,
+    position: String,
+    salary_usd: f64,
+    currency: String,
+) -> String {
+    let nik_clone = nik.clone();
+    
+    if nik.len() != 16 || !nik.chars().all(char::is_numeric) {
+        return "NIK Must 16 Digits".to_string();
+    }
+
+    STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut();
+        
+        if storage.employees.contains_key(&nik_clone) {
+            return "NIK Exist".to_string();
+        }
+
+        storage.employees.insert(nik_clone, Employee {
+            nik,
+            name,
+            email,
+            position,
+            salary_usd,
+            currency,
+        });
+
+        "Employee successfully stored".to_string()
+    })
+}
+
+## 🚀 Getting Started
+Prerequisites
+[DFX SDK](https://internetcomputer.org/docs/building-apps/getting-started/install)
+Rust (backend)
+React + Vite (frontend)
+Tailwind (css)
+
+Installation
 
 ```bash
-cd salary_net/
-dfx help
-dfx canister --help
-```
+# Clone repositori
+git clone https://github.com/yasminm85/masy-net.git
 
-## Running the project locally
+# Directory
+cd masy-net
 
-If you want to test your project locally, you can use the following commands:
+# Instal dependencies
+npm install  
 
-```bash
-# Starts the replica, running in the background
+# Deploy to local ICP replica
 dfx start --background
-
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
-```
-
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
-
-If you have made changes to your backend canister, you can generate a new candid interface with
-
-```bash
-npm run generate
-```
-
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
-
-If you are making frontend changes, you can start a development server with
-
-```bash
-npm start
-```
-
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
-
-### Note on frontend environment variables
-
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
-
-- set`DFX_NETWORK` to `ic` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
+dfx deploy   

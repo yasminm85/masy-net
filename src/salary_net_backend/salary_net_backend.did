@@ -1,3 +1,36 @@
+type Employee = record {
+  nik: text;
+  name: text;
+  email: text;
+  position: text;
+  salary_usd: float64;
+  currency: text;
+};
+
+type ApiResult = variant {
+  Ok: text;
+  Err: text;
+};
+
+type HeaderField = record { text; text; };
+type HttpRequest = record {
+  method: text;
+  url: text;
+  headers: vec HeaderField;
+  body: blob;
+};
+type HttpResponse = record {
+  status: nat;
+  headers: vec HeaderField;
+  body: blob;
+};
+
 service : {
-    "greet": (text) -> (text) query;
+  "add_employee": (text, text, text, text, float64, text) -> (text);
+  "get_all_employees": () -> (vec Employee);
+  "fetch_exchange_rates": () -> (ApiResult);
+  "http_request": (HttpRequest) -> (HttpResponse) query;
+  "http_request_update": (HttpRequest) -> (HttpResponse);
+  "transform": (record { response : HttpResponse; context : opt blob }) -> (HttpResponse) query;
+  "calculate_salary": (text) -> (ApiResult);
 }

@@ -2,10 +2,35 @@
   "canisters": {
     "salary_net_backend": {
       "candid": "src/salary_net_backend/salary_net_backend.did",
+      "build": "cargo build --target wasm32-unknown-unknown --release --no-default-features -p salary_net_backend",
       "package": "salary_net_backend",
-      "type": "rust"
+      "type": "rust",
+      "http_request": {
+        "enabled": true
+      }
+    },
+    "salary_net_frontend": {
+      "dependencies": [
+        "salary_net_backend"
+      ],
+      "source": [
+        "src/salary_net_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "salary_net_frontend"
+    },
+    "internet_identity": {
+    "type": "custom",
+    "candid": "https://github.com/dfinity/internet-identity/releases/download/release-2024-03-08/internet_identity.did",
+    "wasm": "https://github.com/dfinity/internet-identity/releases/download/release-2024-03-08/internet_identity_dev.wasm.gz",
+    "remote": {
+      "id": {
+        "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+      }
+    }
     }
   },
+  
   "defaults": {
     "build": {
       "args": "",
