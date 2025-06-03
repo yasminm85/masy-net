@@ -13,7 +13,7 @@
 ### 2. Data Storage on ICP
 - User can add new employee data and stored in canister's memory
 ### 3. Currency Conversion via HTTPS Outcalls
-- The canister sends an authenticated request to [ExchangeRate-API](https://www.exchangerate-api.com/)
+- The canister sends an authenticated request to [ExchangeRate-API]((https://billing.currencyfreaks.com/login))
  
 ## 👾 Code Snippets
 ### Internet Identity Login
