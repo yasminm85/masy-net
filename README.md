@@ -80,15 +80,15 @@
 }
 ### 💾 Data Storage in Canister
 
-fn add_employee(
-    nik: String,
-    name: String,
-    email: String,
-    position: String,
-    salary_usd: f64,
-    currency: String,
-) -> String {
-    let nik_clone = nik.clone();
+    fn add_employee(
+        nik: String,
+        name: String,
+        email: String,
+        position: String,
+        salary_usd: f64,
+        currency: String,
+    ) -> String {
+        let nik_clone = nik.clone();
     
     if nik.len() != 16 || !nik.chars().all(char::is_numeric) {
         return "NIK Must 16 Digits".to_string();
