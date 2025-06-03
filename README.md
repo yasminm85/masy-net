@@ -17,7 +17,7 @@
  
 ## 👾 Code Snippets
 ### Internet Identity Login
-AuthContext.jsx
+
 const login = async (onSuccessRedirect = "/management") => {
     try {
       if (!authClient) {
@@ -54,8 +54,7 @@ const login = async (onSuccessRedirect = "/management") => {
     }
   };
 ### 💱 Currency Conversion (HTTPS Outcall)
-lib.rs
-#[update]
+
 async fn fetch_exchange_rates() -> ApiResult {
     let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=YOURAPI".to_string();
     
@@ -81,8 +80,7 @@ async fn fetch_exchange_rates() -> ApiResult {
     result.into()
 }
 ### 💾 Data Storage in Canister
-lib.rs
-#[update]
+
 fn add_employee(
     nik: String,
     name: String,
