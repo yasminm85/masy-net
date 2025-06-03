@@ -38,7 +38,7 @@ const login = async (onSuccessRedirect = "/management") => {
             setPrincipal(identity.getPrincipal());
             resolve(true);
             
-            // redirect dulu
+            
             window.location.href = onSuccessRedirect;
           },
           onError: (error) => {
