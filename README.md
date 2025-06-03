@@ -57,7 +57,7 @@ const login = async (onSuccessRedirect = "/management") => {
 lib.rs
 #[update]
 async fn fetch_exchange_rates() -> ApiResult {
-    let url = "https://api.exchangerate-api.com/v4/latest/USD";
+    let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=YOURAPI".to_string();
     
     let request = CanisterHttpRequestArgument {
         url: url.to_string(),
