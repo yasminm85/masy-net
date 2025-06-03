@@ -18,13 +18,12 @@
 ## 👾 Code Snippets
 ### Internet Identity Login
 
-const login = async (onSuccessRedirect = "/management") => {
-    try {
+     const login = async (onSuccessRedirect = "/management") => {
+     try {
       if (!authClient) {
         console.error("Auth client not initialized");
         return false;
       }
-
       const identityProvider = import.meta.env.VITE_DFX_NETWORK === "ic"
         ? "https://identity.ic0.app"
         : `http://${import.meta.env.VITE_CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`;
@@ -55,7 +54,7 @@ const login = async (onSuccessRedirect = "/management") => {
   };
 ### 💱 Currency Conversion (HTTPS Outcall)
 
-async fn fetch_exchange_rates() -> ApiResult {
+    async fn fetch_exchange_rates() -> ApiResult {
     let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=YOURAPI".to_string();
     
     let request = CanisterHttpRequestArgument {
