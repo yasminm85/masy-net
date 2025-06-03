@@ -11,7 +11,7 @@ const LandingPage = () => {
     if (success) {
       setIsLoginOpen(false);
     } else {
-      alert("Login gagal, silakan coba lagi");
+      alert("Failed, Try Again");
     }
   };
 
