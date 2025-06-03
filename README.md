@@ -141,7 +141,7 @@ dfx start --background
 dfx deploy
 
 ## 🧑‍🧒‍🧒 Contributor
-- [@yasminm85](https://github.com/yasminm85) - Lead Project | Backend Dev
-- [@enjltsr](https://github.com/enjltsr) - UI/UX | Frontend Dev
-- [@juwitafazh](https://github.com/juwitafazh) - Technical Writting
+[@yasminm85](https://github.com/yasminm85) 
+[@enjltsr](https://github.com/enjltsr) 
+[@juwitafazh](https://github.com/juwitafazh)
 
