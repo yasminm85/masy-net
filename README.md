@@ -138,4 +138,10 @@ npm install
 
 # Deploy to local ICP replica
 dfx start --background
-dfx deploy   
+dfx deploy
+
+## 🧑‍🧒‍🧒 Contributor
+- [@yasminm85](https://github.com/yasminm85) - Lead Project & Backend Dev
+- [@enjltsr](https://github.com/enjltsr) - UI/UX & Frontend Dev
+- [@juwitafazh](https://github.com/juwitafazh) - Technical Writting
+
