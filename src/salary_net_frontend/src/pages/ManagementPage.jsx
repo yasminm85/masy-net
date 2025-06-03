@@ -17,7 +17,6 @@ const ManagementPage = () => {
     email: "",
     position: "",
     salary_usd: "",
-    currency: "IDR"
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -32,15 +31,18 @@ const ManagementPage = () => {
       }
 
       const identity = authClient.getIdentity();
+      
+      const isLocal = import.meta.env.VITE_DFX_NETWORK === "local";
+      const host = isLocal ? "http://127.0.0.1:4943" : "https://ic0.app";
+      
       const agent = new HttpAgent({ 
         identity,
-        host: "https://ic0.app"
+        host
       });
 
-      if (import.meta.env.VITE_DFX_NETWORK !== "ic") {
+      if (isLocal) {
         await agent.fetchRootKey();
       }
-
       return Actor.createActor(idlFactory, {
         agent,
         canisterId: import.meta.env.VITE_CANISTER_ID_SALARY_NET_BACKEND,
@@ -57,12 +59,12 @@ const ManagementPage = () => {
       setLoading(true);
       const actor = await createBackendActor();
       if (!actor) return;
-  
-      const employees = await actor.get_all_employees();
+      const employees = await actor.get_all_employees();      
       setEmployees(employees);
+      setMessage({ text: `Loaded ${employees.length} employees`, type: "success" });
     } catch (error) {
       console.error("Failed to fetch employees:", error);
-      setMessage({ text: "Failed to attach data", type: "error" });
+      setMessage({ text: "Failed to fetch data", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,6 @@ const ManagementPage = () => {
     try {
       const actor = await createBackendActor();
       if (!actor) return;
-      
       const result = await actor.fetch_exchange_rates();
       if ("err" in result) {
         setMessage({ text: `Failed updated rates: ${result.err}`, type: "error" });
@@ -81,26 +82,47 @@ const ManagementPage = () => {
       }
     } catch (error) {
       console.error("Failed to fetch rates:", error);
-    }
-  };
-//ganti bentar
-  const calculateSalary = async (nik) => {
-    try {
-      const actor = await createBackendActor();
-      if (!actor) return;
-      
-      const result = await actor.calculate_salary(nik);
-      if ("err" in result) {
-        setMessage({ text: result.err, type: "error" });
-      } else {
-        setConvertedSalary(result.ok);
-      }
-    } catch (error) {
-      console.error("Failed to calculate salary:", error);
+      setMessage({ text: "Failed to fetch exchange rates", type: "error" });
     }
   };
 
+const calculateSalary = async (nik) => {
+  try {
+    const actor = await createBackendActor();
+    if (!actor) return;
+      const result = await actor.calculate_salary(nik);
+    
+    if (result && typeof result === 'object') {
+      if ("err" in result) {
+        setMessage({ text: result.err, type: "error" });
+        setConvertedSalary("Error calculating salary");
+      } else if ("ok" in result) {
+        if (typeof result.ok === 'object') {
+          setConvertedSalary(JSON.stringify(result.ok, null, 2));
+        } else {
+          setConvertedSalary(result.ok);
+        }
+      } else {
+        if (result.idr !== undefined && result.eth !== undefined) {
+          setConvertedSalary(`IDR: ${result.idr.toLocaleString()} | ETH: ${result.eth}`);
+        } else {
+          setConvertedSalary(JSON.stringify(result, null, 2));
+        }
+      }
+    } else if (typeof result === 'string') {
+      setConvertedSalary(result);
+    } else {
+      setConvertedSalary(`Response: ${JSON.stringify(result)}`);
+    }
+    
+  } catch (error) {
+    setMessage({ text: "Failed to calculate salary", type: "error" });
+    setConvertedSalary("Error occurred");
+  }
+};
+
   useEffect(() => {
+    console.log("Component mounted, loading initial data...");
     fetchEmployees();
     fetchExchangeRates(); 
   }, []);
@@ -114,28 +136,30 @@ const ManagementPage = () => {
       const actor = await createBackendActor();
       if (!actor) return;
 
+      
       const result = await actor.add_employee(
         formData.nik,
         formData.name,
         formData.email,
         formData.position,
         parseFloat(formData.salary_usd),
-        formData.currency
       );
 
       setMessage({ text: result, type: "success" });
+      
       setFormData({
         nik: "",
         name: "",
         email: "",
         position: "",
         salary_usd: "",
-        currency: "IDR"
       });
       setShowAddForm(false);
+      
       await fetchEmployees();
+      
     } catch (error) {
-      console.error("Error detail:", error);
+      console.error("Error adding employee:", error);
       setMessage({ 
         text: `Failed to add data: ${error.message || "Unknown error"}`, 
         type: "error" 
@@ -150,11 +174,12 @@ const ManagementPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleViewSalary = (employee) => {
+  const handleViewSalary = async (employee) => {
     setSelectedEmployee(employee);
-    calculateSalary(employee.nik);
+    setConvertedSalary("Calculating...");
     setShowSalaryModal(true);
-  };
+      await calculateSalary(employee.nik);
+  };  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -192,7 +217,7 @@ const ManagementPage = () => {
             onClick={fetchExchangeRates}
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
           >
-            Currency rate update
+            IDR & ETH Rates
           </button>
         </div>
 
@@ -269,20 +294,6 @@ const ManagementPage = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Currency</label>
-                <select
-                  name="currency"
-                  value={formData.currency}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  disabled={loading}
-                >
-                  <option value="IDR">IDR (Rupiah)</option>
-                  <option value="EUR">EUR (Euro)</option>
-                  <option value="USD">USD (Dolar AS)</option>
-                </select>
-              </div>
             </div>
 
             <div className="flex justify-end pt-4">
@@ -318,7 +329,7 @@ const ManagementPage = () => {
                 <th className="py-3 px-4 border-b text-left">Email</th>
                 <th className="py-3 px-4 border-b text-left">Position</th>
                 <th className="py-3 px-4 border-b text-left">Salary (USD)</th>
-                <th className="py-3 px-4 border-b text-left">Convertion</th>
+                <th className="py-3 px-4 border-b text-left">IDR & ETH</th>
               </tr>
             </thead>
             <tbody>
@@ -335,7 +346,7 @@ const ManagementPage = () => {
                         onClick={() => handleViewSalary(employee)}
                         className="text-blue-600 hover:text-blue-800"
                       >
-                        Convertion Detail
+                        Conversion Detail
                       </button>
                     </td>
                   </tr>
@@ -355,24 +366,19 @@ const ManagementPage = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-xl font-bold mb-4">
-                Salary Convertion {selectedEmployee.name}
+                Salary Conversion {selectedEmployee.name}
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <p className="text-gray-600">Minumum Wage:</p>
+                  <p className="text-gray-600">Minimum Wage:</p>
                   <p className="font-medium">${selectedEmployee.salary_usd.toFixed(2)} USD</p>
-                </div>
-                
-                <div>
-                  <p className="text-gray-600">Currency:</p>
-                  <p className="font-medium">{selectedEmployee.currency}</p>
                 </div>
                 
                 <div className="border-t pt-4">
                   <p className="text-gray-600">Result:</p>
                   <p className="text-lg font-bold text-green-600">
-                    {convertedSalary || "Menghitung..."}
+                    {convertedSalary || "Calculating..."}
                   </p>
                 </div>
               </div>

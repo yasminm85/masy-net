@@ -4,7 +4,6 @@ type Employee = record {
   email: text;
   position: text;
   salary_usd: float64;
-  currency: text;
 };
 
 type ApiResult = variant {
@@ -26,7 +25,7 @@ type HttpResponse = record {
 };
 
 service : {
-  "add_employee": (text, text, text, text, float64, text) -> (text);
+  "add_employee": (text, text, text, text, float64) -> (text);
   "get_all_employees": () -> (vec Employee);
   "fetch_exchange_rates": () -> (ApiResult);
   "http_request": (HttpRequest) -> (HttpResponse) query;

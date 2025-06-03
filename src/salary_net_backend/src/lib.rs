@@ -15,7 +15,6 @@ struct Employee {
     email: String,
     position: String,
     salary_usd: f64,
-    currency: String,
 }
 
 #[derive(Serialize, Deserialize, CandidType, Default)]
@@ -56,7 +55,6 @@ fn add_employee(
     email: String,
     position: String,
     salary_usd: f64,
-    currency: String,
 ) -> String {
     let nik_clone = nik.clone();
     
@@ -77,7 +75,6 @@ fn add_employee(
             email,
             position,
             salary_usd,
-            currency,
         });
 
         "Employee successfully stored".to_string()
@@ -97,7 +94,7 @@ fn get_all_employees() -> Vec<Employee> {
 
 #[update]
 async fn fetch_exchange_rates() -> ApiResult {
-    let url = "https://api.exchangerate-api.com/v4/latest/USD".to_string();
+    let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=628833c638fb444e84f7a359c9999a89".to_string();
     
     let request = CanisterHttpRequestArgument {
         url,
@@ -148,47 +145,58 @@ fn process_exchange_rate_response(response: HttpResponse) -> Result<String, Stri
 
     #[derive(Deserialize)]
     struct ApiResponse {
-        provider: String,
-        terms: String,
         base: String,
         date: String,
-        rates: BTreeMap<String, f64>,
+        rates: BTreeMap<String, String>, 
     }
 
     let api_response: ApiResponse = serde_json::from_str(&body)
         .map_err(|e| format!("JSON parse error: {}", e))?;
 
-    let rates_count = api_response.rates.len();
-    
+    let mut converted_rates = BTreeMap::new();
+    for (key, value_str) in api_response.rates.iter() {
+        match value_str.parse::<f64>() {
+            Ok(value) => {
+                converted_rates.insert(key.clone(), value);
+            }
+            Err(_) => {
+                return Err(format!("Failed to parse rate {} -> {}", key, value_str));
+            }
+        }
+    }
+
+    let rates_count = converted_rates.len();
+
     STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
-        storage.exchange_rates = api_response.rates;
+        storage.exchange_rates = converted_rates;
     });
 
     Ok(format!(
         "Rates updated for {} currencies (source: {}, date: {})",
         rates_count,
-        api_response.provider,
+        api_response.base,
         api_response.date
     ))
 }
+
 
 #[query]
 fn calculate_salary(nik: String) -> ApiResult {
     let result = STORAGE.with(|storage| {
         let storage = storage.borrow();
         let employee = storage.employees.get(&nik).ok_or("Employee not found")?;
-        let rate = storage.exchange_rates.get(&employee.currency).ok_or("Currency rate not available")?;
+        let idr_rate = storage.exchange_rates.get("IDR").ok_or("IDR rate not available")?;
+        let eth_rate = storage.exchange_rates.get("ETH").ok_or("ETH rate not available")?;
 
-        let local_salary = employee.salary_usd * rate;
+
+        let slry_idr = employee.salary_usd * idr_rate;
+        let slry_eth = employee.salary_usd * eth_rate;
         Ok(format!(
-            "{}: Salary {} {} = {:.2} USD (Rate: 1 USD = {} {})",
-            employee.name,
-            local_salary,
-            employee.currency,
-            employee.salary_usd,
-            rate,
-            employee.currency
+            "Salary IDR {:.2} | ETH {:.6} (from {} USD)",
+            slry_idr,
+            slry_eth,
+            employee.salary_usd
         ))
     });
     
