@@ -94,7 +94,7 @@ fn get_all_employees() -> Vec<Employee> {
 
 #[update]
 async fn fetch_exchange_rates() -> ApiResult {
-    let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=628833c638fb444e84f7a359c9999a89".to_string();
+    let url = "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=YOURAPI".to_string();
     
     let request = CanisterHttpRequestArgument {
         url,
