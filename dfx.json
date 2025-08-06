@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "masy-net-backend": {
+      "main": "src/masy-net-backend/main.mo",
+      "type": "motoko"
+    },
+    "masy-net-frontend": {
+      "dependencies": [
+        "masy-net-backend"
+      ],
+      "source": [
+        "src/masy-net-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "masy-net-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
