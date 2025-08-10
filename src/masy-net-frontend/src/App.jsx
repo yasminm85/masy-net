@@ -1,31 +1,46 @@
-import { useState } from 'react';
-import { masy_net_backend } from 'declarations/masy-net-backend';
+import { useEffect, useState } from 'react';
+import { AuthClient} from "@dfinity/auth-client";
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [principal, setPrincipal] = useState(null);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    masy_net_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
+  async function handleLogin() {
+  const authClient = await AuthClient.create();
+  
+  try {
+    await authClient.login({
+      identityProvider: 
+        //  "https://identity.ic0.app", 
+        `http://uxrrr-q7777-77774-qaaaq-cai.localhost:4943`,
+      onSuccess: async () => {
+        const identity = authClient.getIdentity();
+        const principalId = identity.getPrincipal().toText();
+        setPrincipal(principalId);
+      },
     });
-    return false;
+  } catch (error) {
+    console.error("Login failed:", error);
   }
+}
+
+  
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div style={{ padding: "20px"}}>
+      <h1>Login Internet Identity</h1>
+      {principal ? (
+        <div>
+          <p>Logged In</p>
+          <code>{principal}</code>
+        </div>
+      ) : (
+        <button onClick={handleLogin}>Login</button>
+      )}
+    </div>
+
+    
   );
+
 }
 
 export default App;
