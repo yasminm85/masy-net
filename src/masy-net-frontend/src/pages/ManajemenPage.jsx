@@ -1,8 +1,9 @@
-// src/components/EmployeesManagement.jsx
 import React, { useState } from "react";
+import TimelineHistory from "./TimelineHistory";
 
 const EmployeesManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalHistoryOpen, setIsModalHistoryOpen] = useState(false);
 
   const tableHeaders = [
     "Name",
@@ -29,9 +30,11 @@ const EmployeesManagement = () => {
 
   return (
     <div className="min-h-screen bg-richBlack text-whiteSmoke px-4 py-10">
-
-      {/* header */}
-      <div id="management" className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+      {/* Header */}
+      <div
+        id="management"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3"
+      >
         <h1 className="text-2xl sm:text-3xl font-bold">Employees Management</h1>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -67,7 +70,10 @@ const EmployeesManagement = () => {
                 <td className="px-6 py-4">{emp.position}</td>
                 <td className="px-6 py-4">{emp.level}</td>
                 <td className="px-6 py-4 space-y-2">
-                  <button className="w-full bg-white/5 px-4 py-2 rounded-lg font-medium border border-white/20 text-white hover:bg-white/20 transition">
+                  <button
+                    onClick={() => setIsModalHistoryOpen(true)}
+                    className="w-full bg-white/5 px-4 py-2 rounded-lg font-medium border border-white/20 text-white hover:bg-white/20 transition"
+                  >
                     View History Position
                   </button>
                   <button className="w-full bg-white/5 px-4 py-2 rounded-lg font-medium border border-white/20 text-white hover:bg-white/20 transition">
@@ -121,6 +127,28 @@ const EmployeesManagement = () => {
         ))}
       </div>
 
+      {/* Modal History */}
+      {isModalHistoryOpen && (
+        <div className="fixed inset-0 bg-richBlack/50 flex items-center justify-center z-50">
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl w-[650px] h-[550px] overflow-y-auto relative shadow-lg scrollbar-hide">
+
+            <div className=" overflow-y-auto scrollbar-hide py-6">
+              <TimelineHistory />
+            </div>
+
+            <div className="p-4 border-t border-white/20 flex justify-end">
+              <button
+                onClick={() => setIsModalHistoryOpen(false)}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Add Employee */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
           <div
@@ -128,7 +156,6 @@ const EmployeesManagement = () => {
             onClick={() => setIsModalOpen(false)}
           ></div>
 
-          {/* Tambah Employee */}
           <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 w-full max-w-lg shadow-xl">
             <h2 className="text-xl font-bold mb-4 text-white">Add Employee</h2>
             <form className="space-y-4">
