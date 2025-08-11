@@ -15,7 +15,6 @@ function App() {
       <Footer/>
       <ManajemenPage/>
       <DashboardAnalytics/>
-      <TimelineHistory/>
     </div>
   );
 }
