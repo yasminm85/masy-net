@@ -23,7 +23,7 @@ const TimelineHistory = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-richBlack text-whiteSmoke px-4 py-10">
+    <div className="border border-transparent rounded-xl w-[600px] h-[400px] overflow-y-auto p-4 scrollbar-hide">
       <div className="max-w-4xl mx-auto">
         {/* Judul */}
         <h1 className="text-3xl font-bold mb-2">Timeline History Position</h1>
@@ -32,10 +32,8 @@ const TimelineHistory = () => {
         </p>
 
         <div className="relative">
-          {/* Vertical line */}
           <div className="absolute left-6 top-0 w-1 h-full bg-gradient-to-b from-electricPurple/40 to-neonCyan/40 rounded-full"></div>
 
-          {/* Timeline */}
           <div className="space-y-8">
             {data.map((item, index) => (
               <div key={index} className="flex items-start relative">
@@ -43,7 +41,6 @@ const TimelineHistory = () => {
                   <Briefcase size={20} />
                 </div>
 
-                {/* card */}
                 <div className="ml-6 flex-1">
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl shadow-lg hover:shadow-electricPurple/20 transition">
                     <h3 className="text-xl font-semibold">{item.role}</h3>
@@ -58,13 +55,11 @@ const TimelineHistory = () => {
                       </span>
                     </div>
 
-                    {/* desc */}
                     <div className="flex items-start gap-2 text-coolGray mt-3">
                       <FileText size={16} className="mt-1 flex-shrink-0" />
                       <p>{item.description}</p>
                     </div>
 
-                    {/* status */}
                     <div className="mt-4">
                       <span
                         className={`px-3 py-1 text-sm rounded-full ${item.statusColor}`}
