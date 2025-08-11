@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import FeatureCarousel from "../components/FeatureCarousel";
 import HeroAnimation from "../components/HeroAnimation";
 import CryptoGraphAnimation from "../components/Background Animation";
@@ -34,8 +33,8 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen text-white overflow-hidden">
-      {/* bg */}
+    <div className="relative w-full min-h-screen text-white overflow-hidden scrollbar-hide">
+      {/* background */}
       <div className="absolute inset-0 z-0 opacity-40">
         <CryptoGraphAnimation />
         <BackgroundComponent/>
