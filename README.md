@@ -1,6 +1,6 @@
 # Masy-net
 
-[Masy-net] is a decentralized data storage application built on the Internet Computer Protocol (ICP) that also provides digital contract and employee position history. Users can securely log in using Internet Identity (II), a passwordless authentication system, to access its features.
+Masy-net is a decentralized data storage application built on the Internet Computer Protocol (ICP) that also provides digital contract and employee position history. Users can securely log in using Internet Identity (II), a passwordless authentication system to access its features.
 
 **✨ Key Features**:
 - 🔐 Passwordless Login via Internet Identity (II)
