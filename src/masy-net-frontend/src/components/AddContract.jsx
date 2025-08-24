@@ -9,8 +9,6 @@ const AddContract = ({ onClose, onBuildContract, employeeId}) => {
       endDate: "",
       responsibilities: "",
     });
-
-
   
     const handleChange = (e) => {
       setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

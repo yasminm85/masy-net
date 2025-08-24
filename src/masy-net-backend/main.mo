@@ -3,7 +3,6 @@ import Array "mo:base/Array";
 import Iter "mo:base/Iter";
 import HashMap "mo:base/HashMap";
 import Hash "mo:base/Hash";
-import Debug "mo:base/Debug";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
 import Int "mo:base/Int";

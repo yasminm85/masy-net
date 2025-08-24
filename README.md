@@ -48,10 +48,13 @@ npm run dev
 ## ⚙️ Integration
 If you want to integrate with backend canister directly:
 1. **If you want to integrate with the backend canister directly:**
+```bash
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory as backend_idl } from "../../declarations/masy-net-backend/masy-net-backend.did.js";
 import canisterIds from "../../../.dfx/local/canister_ids.json"; 
+```
 2. **Create an Actor**
+```bash
 const network = process.env.DFX_NETWORK || "local";
 const backendCanisterId = canisterIds["masy-net-backend"][network];
 
@@ -71,11 +74,13 @@ export const createActor = async (identity) => {
     canisterId: backendCanisterId,
   });
 };
+```
 3. **Call Backend Methods**
+```bash
 import { createBackendActor } from "../../utils/actorClient";
 const actor = await createBackendActor(identity);
 const list = await actor.listEmployees();
-
+```
 ## 🤝 Contributing
 Contributions are welcome
 1. Fork the repository
