@@ -1,22 +1,37 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { AuthDesc, AuthProvider } from "./context/AuthContext";
 import Footer from "./components/Footer";
-
 import LandingPage from "./pages/LandingPage";
 import ManajemenPage from "./pages/ManajemenPage";
-import TimelineHistory from "./pages/TimelineHistory";
-import DashboardAnalytics from "./pages/Dashboard";
 
+const Protected = ({children}) => {
+  const { isAuthenticated, loading} = AuthDesc();
+
+  if(loading) {
+    return (
+      <div className="min-h-screen bg-richBlack flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
 function App() {
   return (
-    <div>
-      <Navbar/>
-      <LandingPage/>
-      <Footer/>
-      <ManajemenPage/>
-      <DashboardAnalytics/>
-      <TimelineHistory/>
-    </div>
+    <AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/management" element={<ManajemenPage />} />
+      </Routes>
+      <Footer />
+    </Router>
+    </AuthProvider>
   );
 }
 

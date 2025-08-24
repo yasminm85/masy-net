@@ -3,16 +3,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const features = [
   {
-    title: "Dashboard Analitik",
-    desc: "Pantau performa dan efisiensi tim dengan data visual.",
+    title: "Stores Employee Data",
+    desc: "You can stores employee data securely.",
   },
   {
-    title: "Manajemen Proyek",
-    desc: "Kelola tugas dan progres tim secara kolaboratif.",
+    title: "Timeline History Position",
+    desc: "Track your employee position.",
   },
   {
-    title: "Automasi Laporan",
-    desc: "Otomatisasi pembuatan laporan rutin tanpa ribet.",
+    title: "Digital Contract",
+    desc: "Create your digital contract with digital signatures.",
   },
 ];
 

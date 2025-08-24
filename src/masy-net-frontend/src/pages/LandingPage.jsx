@@ -1,12 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FeatureCarousel from "../components/FeatureCarousel";
 import HeroAnimation from "../components/HeroAnimation";
 import CryptoGraphAnimation from "../components/Background Animation";
 import InfinityGlow from "../components/IcpAnimation";
 import BackgroundComponent from "../components/BgComponents";
+import Navbar from "../components/Navbar";
+import { AuthDesc } from "../context/AuthContext";
 
 const LandingPage = () => {
+
+  const { isAuthenticated, login} = AuthDesc();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(isAuthenticated) {
+      if(isAuthenticated) {
+        navigate('/management');
+      }
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = async () => {
+    await login();
+  };
+
 
   useEffect(() => {
     const cursor = document.getElementById("cursor-light");
@@ -35,6 +53,7 @@ const LandingPage = () => {
 
   return (
     <div className="relative w-full min-h-screen text-white overflow-hidden">
+      <Navbar />
       {/* bg */}
       <div className="absolute inset-0 z-0 opacity-40">
         <CryptoGraphAnimation />
@@ -62,7 +81,7 @@ const LandingPage = () => {
             <div className="flex justify-center md:justify-start">
               <button
                 className="bg-whiteSmoke px-6 py-2 rounded-full text-black font-bold border-2 border-coolGray hover:bg-transparent hover:text-coolGray transition-all"
-                onClick={() => navigate("/management")}
+                onClick={handleLogin}
               >
                 Get Started
               </button>
@@ -86,7 +105,7 @@ const LandingPage = () => {
               About Us
             </h2>
             <p className="text-coolGray leading-relaxed text-center md:text-left max-w-xl mx-auto">
-              Masy-net is a decentralized workforce management platform that stores employee data on-chain, leverages Internet Identity for secure authentication and get updated convert salary.
+              Masy-net is a decentralized workforce management platform that stores employee data on-chain, leverages Internet Identity for secure authentication and create digital contract.
             </p>
           </div>
         </section>
