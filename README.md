@@ -17,19 +17,28 @@ Make sure you have:
 
 ### Steps
 1. **Clone the repo**
-   ```bash
+```bash
    git clone https://github.com/yasminm85/masy-net.git
    cd masy-net
+   ```
 2. **Install Frontend Dependencies**
+```bash
   cd src/masy-net-frontend
   npm install
+  ```
 3. **Start Local IC**
+```bash
   dfx start --background
+  ```
 4. **Deploy Canister**
+```bash
   dfx deploy
+  ```
 5. **Run the Frontend**
+```bash
   cd src/masy-net-frontend
   npm run dev
+  ```
 
 If you have made changes to your backend canister, you can generate a new candid interface with
 
@@ -88,8 +97,4 @@ Contributions are welcome
 3. Commit your changes with message
 4. Push to your fork and open a pull request
 
-## 👩🏻‍💻 Contributor
-[@yasminm85](https://github.com/yasminm85)
-[@enjltsr](https://github.com/enjltsr)
-[@juwitafazh](https://github.com/juwitafazh)
 

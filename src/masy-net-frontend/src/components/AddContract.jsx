@@ -24,7 +24,7 @@ const AddContract = ({ onClose, onBuildContract, employeeId}) => {
     <div>
       {/* Add Contract */}
           <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 w-full max-w-lg shadow-xl">
-            <h2 className="text-xl font-bold mb-4 text-white">Add Employee</h2>
+            <h2 className="text-xl font-bold mb-4 text-white">Add Contract</h2>
             <form className="space-y-4" onSubmit={handleSubmitContract}>
             <input
                 type="text"

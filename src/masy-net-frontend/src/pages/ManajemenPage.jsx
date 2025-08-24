@@ -44,12 +44,9 @@ const EmployeesManagement = () => {
   useEffect(() => {
     if (authLoading) return;
     if (!identity) {
-      console.log("No identity, redirecting to login");
       navigate('/');
       return;
     }
-    console.log(identity);
-
     const fetchEmployees = async () => {
       try {
         setLoading(true);
